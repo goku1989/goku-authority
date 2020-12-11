@@ -11,4 +11,6 @@ public interface UserInfoService {
     Boolean registerUserInfo(UserInfoDTO userInfoDTO);
 
     String doLogin(UserLoginDTO userLoginDTO);
+
+    UserInfoDTO getUserByToken(String token);
 }

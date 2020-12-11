@@ -2,11 +2,13 @@ package com.goku.authority;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import tk.mybatis.spring.annotation.MapperScan;
 
 @EnableSwagger2
+@EnableFeignClients
 @SpringBootApplication
 @MapperScan("com.goku.authority.dao.*")
 @ComponentScan(basePackages = {"com.goku.authority.**","com.goku.foundation.**"})

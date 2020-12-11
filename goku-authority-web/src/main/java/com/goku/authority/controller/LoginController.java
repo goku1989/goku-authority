@@ -1,6 +1,7 @@
 package com.goku.authority.controller;
 
 import com.goku.authority.service.UserInfoService;
+import com.goku.authority.service.dto.UserInfoDTO;
 import com.goku.authority.service.dto.UserLoginDTO;
 import com.goku.foundation.response.BaseResponse;
 import io.swagger.annotations.Api;
@@ -25,5 +26,10 @@ public class LoginController {
             baseResponse.setMessage("没有此用户");
         }
         return baseResponse;
+    }
+
+    @GetMapping(value = "getUserByToken")
+    public BaseResponse<UserInfoDTO> getUserByToken(@RequestParam String token) {
+        return new BaseResponse<>(userInfoService.getUserByToken(token));
     }
 }

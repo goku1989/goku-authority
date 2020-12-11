@@ -1,5 +1,6 @@
 package com.goku.authority.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.goku.authority.dao.mapper.UserInfoMapper;
 import com.goku.authority.dao.po.UserInfo;
 import com.goku.authority.service.UserInfoService;
@@ -8,6 +9,7 @@ import com.goku.authority.service.dto.UserLoginDTO;
 import com.goku.foundation.redis.RedisUtils;
 import com.goku.foundation.util.CommonUtil;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 import tk.mybatis.mapper.weekend.WeekendSqls;
@@ -66,11 +68,29 @@ public class UserInfoServiceImpl implements UserInfoService {
                 .build());
         if (CollectionUtils.isNotEmpty(userInfos)) {
             UserInfo userInfo = userInfos.get(0);
+            String userId = String.valueOf(userInfo.getId());
+            String tokenFromRedis = (String) redisUtils.get(userId);
+            if (StringUtils.isNotEmpty(tokenFromRedis)) {
+                return tokenFromRedis;
+            }
             String token = UUID.randomUUID().toString();
-            redisUtils.set(String.valueOf(userInfo.getId()), token, 10);
+            String userInfoString = JSON.toJSONString(userInfo);
+            redisUtils.set(userId, token, 1800);
+            redisUtils.set(token, userInfoString, 1800);
             return token;
         }
 
         return null;
+    }
+
+    @Override
+    public UserInfoDTO getUserByToken(String token) {
+        String userJsonString = (String) redisUtils.get(token);
+        if (StringUtils.isNotEmpty(userJsonString)) {
+            UserInfoDTO userInfoDTO = JSON.parseObject(userJsonString, UserInfoDTO.class);
+            userInfoDTO.setUserPassword(null);
+            return userInfoDTO;
+        }
+        return new UserInfoDTO();
     }
 }
