@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(name = "authority", url = "127.0.0.1:20030")
 public interface SSOUtils {
-    @GetMapping(value = "/v1/login/getUserByToken")
+    @GetMapping(value = "/v1/user/getUserByToken")
     BaseResponse<UserInfoDTO> getUserByToken(@RequestParam("token") String token);
 }

@@ -12,5 +12,7 @@ public interface UserInfoService {
 
     String doLogin(UserLoginDTO userLoginDTO);
 
+    String doLogout(String token);
+
     UserInfoDTO getUserByToken(String token);
 }

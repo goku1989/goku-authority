@@ -18,13 +18,18 @@ public class UserInfoController {
     private UserInfoService userInfoService;
 
     @ParamLog(type = "查看", value = "查看用户信息")
-    @GetMapping(value = "userInfos")
+    @GetMapping(value = "/userInfos")
     public BaseResponse<List<UserInfoDTO>> getUserInfos(@RequestParam(name = "userId", required = false) Long userId) {
         return new BaseResponse<>(userInfoService.getUserInfos(userId));
     }
 
-    @PostMapping(value = "userInfo")
+    @PostMapping(value = "/userInfo")
     public BaseResponse<Boolean> registerUserInfo(@RequestBody UserInfoDTO userInfoDTO) {
         return new BaseResponse<>(userInfoService.registerUserInfo(userInfoDTO));
+    }
+
+    @GetMapping(value = "/getUserByToken")
+    public BaseResponse<UserInfoDTO> getUserByToken(@RequestParam String token) {
+        return new BaseResponse<>(userInfoService.getUserByToken(token));
     }
 }

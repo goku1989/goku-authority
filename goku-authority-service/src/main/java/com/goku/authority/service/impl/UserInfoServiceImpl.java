@@ -84,6 +84,19 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
+    public String doLogout(String token) {
+        String userJsonString = (String) redisUtils.get(token);
+        if (StringUtils.isNotEmpty(userJsonString)) {
+            UserInfo userInfo = JSON.parseObject(userJsonString, UserInfo.class);
+            redisUtils.del(String.valueOf(userInfo.getId()));
+            redisUtils.del(token);
+            return "logURL";
+        } else {
+            return null;
+        }
+    }
+
+    @Override
     public UserInfoDTO getUserByToken(String token) {
         String userJsonString = (String) redisUtils.get(token);
         if (StringUtils.isNotEmpty(userJsonString)) {

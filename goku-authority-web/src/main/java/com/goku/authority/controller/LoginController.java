@@ -17,7 +17,7 @@ public class LoginController {
     @Resource
     private UserInfoService userInfoService;
 
-    @PostMapping(value = "login")
+    @PostMapping(value = "/login")
     public BaseResponse<String> doLogin(@RequestBody UserLoginDTO userLoginDTO) {
         String token = userInfoService.doLogin(userLoginDTO);
         BaseResponse baseResponse = new BaseResponse(token);
@@ -28,8 +28,14 @@ public class LoginController {
         return baseResponse;
     }
 
-    @GetMapping(value = "getUserByToken")
-    public BaseResponse<UserInfoDTO> getUserByToken(@RequestParam String token) {
-        return new BaseResponse<>(userInfoService.getUserByToken(token));
+    @PostMapping(value = "/logout")
+    public BaseResponse<String> doLogout(@RequestBody String token) {
+        String logoutURL = userInfoService.doLogout(token);
+        BaseResponse baseResponse = new BaseResponse(logoutURL);
+        if (StringUtils.isEmpty(logoutURL)) {
+            baseResponse.setCode("500");
+            baseResponse.setMessage("没有此用户");
+        }
+        return baseResponse;
     }
 }
