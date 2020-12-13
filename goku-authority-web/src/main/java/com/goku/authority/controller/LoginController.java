@@ -23,7 +23,7 @@ public class LoginController {
         BaseResponse baseResponse = new BaseResponse(token);
         if (StringUtils.isEmpty(token)) {
             baseResponse.setCode("500");
-            baseResponse.setMessage("没有此用户");
+            baseResponse.setMessage("用户名或密码错误");
         }
         return baseResponse;
     }

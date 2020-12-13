@@ -69,14 +69,14 @@ public class UserInfoServiceImpl implements UserInfoService {
         if (CollectionUtils.isNotEmpty(userInfos)) {
             UserInfo userInfo = userInfos.get(0);
             String userId = String.valueOf(userInfo.getId());
-            String tokenFromRedis = (String) redisUtils.get(userId);
-            if (StringUtils.isNotEmpty(tokenFromRedis)) {
-                return tokenFromRedis;
-            }
+//            String tokenFromRedis = (String) redisUtils.get(userId);
+//            if (StringUtils.isNotEmpty(tokenFromRedis)) {
+//                return tokenFromRedis;
+//            }
             String token = UUID.randomUUID().toString();
             String userInfoString = JSON.toJSONString(userInfo);
-            redisUtils.set(userId, token, 1800);
-            redisUtils.set(token, userInfoString, 1800);
+//            redisUtils.set(userId, token, 1800);
+//            redisUtils.set(token, userInfoString, 1800);
             return token;
         }
 

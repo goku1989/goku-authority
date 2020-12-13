@@ -19,7 +19,7 @@ public class UserInfoController {
 
     @ParamLog(type = "查看", value = "查看用户信息")
     @GetMapping(value = "/userInfos")
-    public BaseResponse<List<UserInfoDTO>> getUserInfos(@RequestParam(name = "userId", required = false) Long userId) {
+    public BaseResponse<List<UserInfoDTO>> getUserInfos(@RequestParam(name = "userId") Long userId) {
         return new BaseResponse<>(userInfoService.getUserInfos(userId));
     }
 
