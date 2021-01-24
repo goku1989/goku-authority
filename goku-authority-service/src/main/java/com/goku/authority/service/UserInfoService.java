@@ -1,7 +1,8 @@
 package com.goku.authority.service;
 
-import com.goku.authority.service.dto.UserInfoDTO;
-import com.goku.authority.service.dto.UserLoginDTO;
+
+import com.goku.authority.dto.UserInfoDTO;
+import com.goku.authority.dto.UserLoginDTO;
 
 import java.util.List;
 
