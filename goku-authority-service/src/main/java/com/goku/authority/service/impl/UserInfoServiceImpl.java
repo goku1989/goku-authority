@@ -7,7 +7,8 @@ import com.goku.authority.dto.UserInfoDTO;
 import com.goku.authority.dto.UserLoginDTO;
 import com.goku.authority.service.UserInfoService;
 import com.goku.foundation.redis.RedisUtils;
-import com.goku.foundation.util.CommonUtil;
+import com.goku.foundation.utils.CommonUtil;
+import com.goku.foundation.utils.POUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,6 @@ import tk.mybatis.mapper.entity.Example;
 import tk.mybatis.mapper.weekend.WeekendSqls;
 
 import javax.annotation.Resource;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,7 +35,7 @@ public class UserInfoServiceImpl implements UserInfoService {
         List<UserInfo> userInfos = userInfoMapper.selectByExample(Example.builder(UserInfo.class)
                 .where(WeekendSqls.<UserInfo>custom()
                         .andEqualTo(UserInfo::getId, userId)
-                        .andEqualTo(UserInfo::getIsDeleted, NOT_DELETE))
+                        .andEqualTo(UserInfo::getDeleted, NOT_DELETE))
                 .build());
 
         List<UserInfoDTO> userInfoDTOS = CommonUtil.convertList(userInfos, UserInfoDTO.class);
@@ -46,15 +46,8 @@ public class UserInfoServiceImpl implements UserInfoService {
     @Override
     public Boolean registerUserInfo(UserInfoDTO userInfoDTO) {
         UserInfo userInfo = CommonUtil.convert(userInfoDTO, UserInfo.class);
-        userInfo.setId(CommonUtil.getSimpleId());
-
-        userInfo.setCreateDate(new Date());
-        userInfo.setModifiedDate(new Date());
-        userInfo.setCreateUser(userInfoDTO.getUserName());
-        userInfo.setModifiedUser(userInfoDTO.getUserName());
-        userInfo.setIsDeleted(NOT_DELETE);
+        POUtils.initCreatPO(userInfo);
         userInfoMapper.insert(userInfo);
-
         return true;
     }
 
@@ -64,7 +57,7 @@ public class UserInfoServiceImpl implements UserInfoService {
                 .where(WeekendSqls.<UserInfo>custom()
                         .andEqualTo(UserInfo::getNickName, userLoginDTO.getNickName())
                         .andEqualTo(UserInfo::getUserPassword, userLoginDTO.getUserPassword())
-                        .andEqualTo(UserInfo::getIsDeleted, NOT_DELETE))
+                        .andEqualTo(UserInfo::getDeleted, NOT_DELETE))
                 .build());
         if (CollectionUtils.isNotEmpty(userInfos)) {
             UserInfo userInfo = userInfos.get(0);

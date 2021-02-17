@@ -8,15 +8,15 @@
         <result column="user_password" property="userPassword" jdbcType="VARCHAR" />
         <result column="user_email" property="userEmail" jdbcType="VARCHAR" />
         <result column="user_phone" property="userPhone" jdbcType="VARCHAR" />
-        <result column="is_deleted" property="isDeleted" jdbcType="TINYINT" />
-        <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
-        <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+        <result column="deleted" property="deleted" jdbcType="TINYINT" />
+        <result column="created_date" property="createdDate" jdbcType="TIMESTAMP" />
+        <result column="created_user" property="createdUser" jdbcType="VARCHAR" />
         <result column="modified_date" property="modifiedDate" jdbcType="TIMESTAMP" />
         <result column="modified_user" property="modifiedUser" jdbcType="VARCHAR" />
         <result column="ts" property="ts" jdbcType="BIGINT" />
     </resultMap>
     <sql id="Base_Column_List" >
-        id, nick_name, user_name, user_password, user_email, user_phone, is_deleted, create_date, create_user,
+        id, nick_name, user_name, user_password, user_email, user_phone, is_deleted, created_date, created_user,
         modified_date, modified_user, ts
     </sql>
 

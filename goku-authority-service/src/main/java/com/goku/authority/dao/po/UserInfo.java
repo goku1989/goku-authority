@@ -1,6 +1,6 @@
 package com.goku.authority.dao.po;
 
-import com.goku.foundation.util.BasePO;
+import com.goku.foundation.utils.BasePO;
 import lombok.Data;
 
 import javax.persistence.Table;
