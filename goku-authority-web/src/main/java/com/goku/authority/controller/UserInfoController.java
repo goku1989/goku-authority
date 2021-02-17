@@ -1,7 +1,7 @@
 package com.goku.authority.controller;
 
+import com.goku.authority.dto.UserInfoDTO;
 import com.goku.authority.service.UserInfoService;
-import com.goku.authority.service.dto.UserInfoDTO;
 import com.goku.foundation.annotation.ParamLog;
 import com.goku.foundation.response.BaseResponse;
 import io.swagger.annotations.Api;
