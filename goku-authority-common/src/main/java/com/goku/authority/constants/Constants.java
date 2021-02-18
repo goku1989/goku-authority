@@ -13,4 +13,6 @@ public class Constants {
 
     public static final String STR_NULL = null;
     public static final String STR_EMPTY = "";
+
+    public static final String USER_INFO = "userInfo-";
 }

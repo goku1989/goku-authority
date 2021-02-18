@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
+@CrossOrigin
 @Api(value = "登录操作", tags = {"登录操作"})
 @RestController
 @RequestMapping("/v1/login")

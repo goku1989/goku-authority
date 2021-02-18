@@ -19,8 +19,7 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.UUID;
 
-import static com.goku.authority.constants.Constants.NOT_DELETE;
-import static com.goku.authority.constants.Constants.STR_EMPTY;
+import static com.goku.authority.constants.Constants.*;
 
 @Service
 public class UserInfoServiceImpl implements UserInfoService {
@@ -55,6 +54,7 @@ public class UserInfoServiceImpl implements UserInfoService {
             return 1;
         }
         UserInfo userInfo = CommonUtil.convert(userInfoDTO, UserInfo.class);
+        userInfo.setGkcode(USER_INFO + CommonUtil.getIdByUUId());
         POUtils.initCreatPO(userInfo);
         userInfoMapper.insert(userInfo);
         return 0;

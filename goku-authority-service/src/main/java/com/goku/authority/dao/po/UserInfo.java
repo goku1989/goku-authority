@@ -8,6 +8,8 @@ import javax.persistence.Table;
 @Data
 @Table(name = "user_info")
 public class UserInfo extends BasePO {
+    private String gkcode;
+
     private String nickName;
 
     private String userName;
