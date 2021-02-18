@@ -9,7 +9,7 @@ import java.util.List;
 public interface UserInfoService {
     List<UserInfoDTO> getUserInfos(Long userId);
 
-    Boolean registerUserInfo(UserInfoDTO userInfoDTO);
+    Integer registerUserInfo(UserInfoDTO userInfoDTO);
 
     String doLogin(UserLoginDTO userLoginDTO);
 

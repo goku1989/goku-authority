@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.goku.authority.constants.Constants.NOT_DELETE;
+import static com.goku.authority.constants.Constants.STR_EMPTY;
 
 @Service
 public class UserInfoServiceImpl implements UserInfoService {
@@ -44,11 +45,19 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
-    public Boolean registerUserInfo(UserInfoDTO userInfoDTO) {
+    public Integer registerUserInfo(UserInfoDTO userInfoDTO) {
+        List<UserInfo> userInfos = userInfoMapper.selectByExample(Example.builder(UserInfo.class)
+                .where(WeekendSqls.<UserInfo>custom()
+                        .andEqualTo(UserInfo::getNickName, userInfoDTO.getNickName())
+                        .andEqualTo(UserInfo::getDeleted, NOT_DELETE))
+                .build());
+        if (CollectionUtils.isNotEmpty(userInfos)) {
+            return 1;
+        }
         UserInfo userInfo = CommonUtil.convert(userInfoDTO, UserInfo.class);
         POUtils.initCreatPO(userInfo);
         userInfoMapper.insert(userInfo);
-        return true;
+        return 0;
     }
 
     @Override
@@ -60,22 +69,22 @@ public class UserInfoServiceImpl implements UserInfoService {
                         .andEqualTo(UserInfo::getDeleted, NOT_DELETE))
                 .build());
         if (CollectionUtils.isNotEmpty(userInfos)) {
-            UserInfo userInfo = userInfos.get(0);
+//            UserInfo userInfo = userInfos.get(0);
             //转string
-            String userId = String.valueOf(userInfo.getId());
+//            String userId = String.valueOf(userInfo.getId());
 //            String tokenFromRedis = (String) redisUtils.get(userId);
 //            if (StringUtils.isNotEmpty(tokenFromRedis)) {
 //                return tokenFromRedis;
 //            }
 
             String token = UUID.randomUUID().toString();
-            String userInfoString = JSON.toJSONString(userInfo);
+//            String userInfoString = JSON.toJSONString(userInfo);
 //            redisUtils.set(userId, token, 1800);
 //            redisUtils.set(token, userInfoString, 1800);
             return token;
         }
 
-        return null;
+        return STR_EMPTY;
     }
 
     @Override

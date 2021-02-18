@@ -27,8 +27,16 @@ public class UserInfoController {
 
     @ApiOperation(value = "注册用户信息")
     @PostMapping(value = "/userInfo")
-    public BaseResponse<Boolean> registerUserInfo(@RequestBody UserInfoDTO userInfoDTO) {
-        return new BaseResponse<>(userInfoService.registerUserInfo(userInfoDTO));
+    public BaseResponse<Integer> registerUserInfo(@RequestBody UserInfoDTO userInfoDTO) {
+        BaseResponse baseResponse = new BaseResponse();
+        Integer integer = userInfoService.registerUserInfo(userInfoDTO);
+        baseResponse.setResponse(integer);
+        if (integer == 0) {
+            baseResponse.setMessage("注册成功");
+        } else if (integer == 1) {
+            baseResponse.setMessage("注册失败，用户名重复");
+        }
+        return baseResponse;
     }
 
     @ApiOperation(value = "通过token获取用户信息")
