@@ -5,6 +5,7 @@ import com.goku.authority.service.UserInfoService;
 import com.goku.foundation.annotation.ParamLog;
 import com.goku.foundation.response.BaseResponse;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -18,16 +19,19 @@ public class UserInfoController {
     private UserInfoService userInfoService;
 
     @ParamLog(type = "查看", value = "查看用户信息")
+    @ApiOperation(value = "查看用户信息")
     @GetMapping(value = "/userInfos")
     public BaseResponse<List<UserInfoDTO>> getUserInfos(@RequestParam(name = "userId") Long userId) {
         return new BaseResponse<>(userInfoService.getUserInfos(userId));
     }
 
+    @ApiOperation(value = "注册用户信息")
     @PostMapping(value = "/userInfo")
     public BaseResponse<Boolean> registerUserInfo(@RequestBody UserInfoDTO userInfoDTO) {
         return new BaseResponse<>(userInfoService.registerUserInfo(userInfoDTO));
     }
 
+    @ApiOperation(value = "通过token获取用户信息")
     @GetMapping(value = "/getUserByToken")
     public BaseResponse<UserInfoDTO> getUserByToken(@RequestParam String token) {
         return new BaseResponse<>(userInfoService.getUserByToken(token));

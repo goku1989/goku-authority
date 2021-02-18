@@ -73,9 +73,9 @@ tags
 *.bak
 *.log
 .logs
-*.yml
 *.gz
 generatorConfig.xml
+*.yml
 
 ## maven release plugin
 pom.xml.releaseBackup
