@@ -31,7 +31,7 @@ public class UserInfoController {
     public BaseResponse<Integer> registerUserInfo(@RequestBody UserInfoDTO userInfoDTO) {
         BaseResponse baseResponse = new BaseResponse();
         Integer integer = userInfoService.registerUserInfo(userInfoDTO);
-        baseResponse.setResponse(integer);
+        baseResponse.setData(integer);
         if (integer == 0) {
             baseResponse.setMessage("注册成功");
         } else if (integer == 1) {
