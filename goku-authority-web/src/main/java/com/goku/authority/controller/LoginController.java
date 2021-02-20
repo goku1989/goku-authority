@@ -8,8 +8,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-@CrossOrigin
 @Api(value = "登录操作", tags = {"登录操作"})
 @RestController
 @RequestMapping("/v1/login")
@@ -18,8 +19,10 @@ public class LoginController {
     private UserInfoService userInfoService;
 
     @PostMapping(value = "/login")
-    public BaseResponse<String> doLogin(@RequestBody UserLoginDTO userLoginDTO) {
-        String token = userInfoService.doLogin(userLoginDTO);
+    public BaseResponse<String> doLogin(@RequestBody UserLoginDTO userLoginDTO,
+                                        HttpServletRequest req,
+                                        HttpServletResponse res) {
+        String token = userInfoService.doLogin(userLoginDTO, req, res);
         BaseResponse baseResponse = new BaseResponse(token);
         if (StringUtils.isEmpty(token)) {
             baseResponse.setCode("500");

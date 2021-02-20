@@ -9,9 +9,10 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
-@CrossOrigin
 @Api(value = "用户管理", tags = {"用户管理"})
 @RestController
 @RequestMapping("/v1/user")
@@ -28,9 +29,11 @@ public class UserInfoController {
 
     @ApiOperation(value = "注册用户信息")
     @PostMapping(value = "/userInfo")
-    public BaseResponse<Integer> registerUserInfo(@RequestBody UserInfoDTO userInfoDTO) {
+    public BaseResponse<Integer> registerUserInfo(@RequestBody UserInfoDTO userInfoDTO,
+                                                  HttpServletRequest req,
+                                                  HttpServletResponse res) {
         BaseResponse baseResponse = new BaseResponse();
-        Integer integer = userInfoService.registerUserInfo(userInfoDTO);
+        Integer integer = userInfoService.registerUserInfo(userInfoDTO, req, res);
         baseResponse.setData(integer);
         if (integer == 0) {
             baseResponse.setMessage("注册成功");
@@ -42,7 +45,8 @@ public class UserInfoController {
 
     @ApiOperation(value = "通过token获取用户信息")
     @GetMapping(value = "/getUserByToken")
-    public BaseResponse<UserInfoDTO> getUserByToken(@RequestParam String token) {
-        return new BaseResponse<>(userInfoService.getUserByToken(token));
+    public BaseResponse<UserInfoDTO> getUserByToken(HttpServletRequest req) {
+        return new BaseResponse<>(userInfoService.getUserByToken(req));
     }
+
 }
