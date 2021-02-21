@@ -1,6 +1,7 @@
 package com.goku.authority.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.goku.authority.dao.mapper.UserInfoMapper;
 import com.goku.authority.dao.po.UserInfo;
 import com.goku.authority.dto.UserInfoDTO;
@@ -10,6 +11,7 @@ import com.goku.foundation.redis.RedisUtils;
 import com.goku.foundation.utils.CommonUtil;
 import com.goku.foundation.utils.CookieUtils;
 import com.goku.foundation.utils.POUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,7 @@ import java.util.UUID;
 import static com.goku.authority.constants.Constants.*;
 import static com.goku.foundation.constant.StandardConstant.USER_TOKEN;
 
+@Slf4j
 @Service
 public class UserInfoServiceImpl implements UserInfoService {
 
@@ -59,11 +62,14 @@ public class UserInfoServiceImpl implements UserInfoService {
         Cookie[] cookies = req.getCookies();
         for (Cookie cookie : cookies) {
             if (cookie.getName().contains(USER_TOKEN)) {
-                // TODO 部署redis后使用redis校验token
-                UserInfo userInfo = new UserInfo();
-                userInfo.setId(Long.valueOf(cookie.getValue()));
-                UserInfo user = userInfoMapper.selectByPrimaryKey(userInfo);
-                userInfoDTO.setNickName(user.getNickName());
+                String token = cookie.getValue();
+                String strToken = (String)redisUtils.get("authority:user_token:" + token);
+                if (StringUtils.isNotEmpty(strToken)) {
+                    String strJson = (String)redisUtils.get("authority:user_info:" + token);
+                    UserInfo userInfo = JSON.parseObject(strJson, UserInfo.class);
+                    userInfoDTO.setNickName(userInfo.getNickName());
+                }
+                return userInfoDTO;
             }
         }
         return userInfoDTO;
@@ -87,7 +93,15 @@ public class UserInfoServiceImpl implements UserInfoService {
         userInfoMapper.insert(userInfo);
 
         String token = UUID.randomUUID().toString();
-        CookieUtils.setCookie(req, res, USER_TOKEN, String.valueOf(userInfo.getId()));
+
+        UserInfo newUserInfo = new UserInfo();
+        newUserInfo.setNickName(userInfo.getNickName());
+
+        String userJson = JSONObject.toJSONString(newUserInfo);
+
+        redisUtils.set("authority:user_token:" + token, token, 60 * 30);
+        redisUtils.set("authority:user_info:" + token, userJson, 60 * 30);
+        CookieUtils.setCookie(req, res, USER_TOKEN, token);
         return 0;
     }
 
@@ -95,6 +109,23 @@ public class UserInfoServiceImpl implements UserInfoService {
     public String doLogin(UserLoginDTO userLoginDTO,
                           HttpServletRequest req,
                           HttpServletResponse res) {
+
+        String token = "";
+        Cookie[] cookies = req.getCookies();
+        if (null != cookies && cookies.length != 0) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().contains(USER_TOKEN)) {
+                    token = cookie.getValue();
+                }
+            }
+        }
+        String strToken = (String)redisUtils.get("authority:user_token:" + token);
+
+        if (StringUtils.isNotEmpty(strToken)) {
+            log.info("redis中存在此token");
+            return token;
+        }
+
         List<UserInfo> userInfos = userInfoMapper.selectByExample(Example.builder(UserInfo.class)
                 .where(WeekendSqls.<UserInfo>custom()
                         .andEqualTo(UserInfo::getNickName, userLoginDTO.getNickName())
@@ -102,22 +133,15 @@ public class UserInfoServiceImpl implements UserInfoService {
                         .andEqualTo(UserInfo::getDeleted, NOT_DELETE))
                 .build());
         if (CollectionUtils.isNotEmpty(userInfos)) {
-//            UserInfo userInfo = userInfos.get(0);
-            //转string
-//            String userId = String.valueOf(userInfo.getId());
-//            String tokenFromRedis = (String) redisUtils.get(userId);
-//            if (StringUtils.isNotEmpty(tokenFromRedis)) {
-//                return tokenFromRedis;
-//            }
+            token = UUID.randomUUID().toString();
 
-            String token = UUID.randomUUID().toString();
-//            String userInfoString = JSON.toJSONString(userInfo);
-//            redisUtils.set(userId, token, 1800);
-//            redisUtils.set(token, userInfoString, 1800);
+            UserInfo newUser = new UserInfo();
+            newUser.setNickName(userInfos.get(0).getNickName());
+            String userJson = JSONObject.toJSONString(newUser);
 
-//            String userJson = JSONObject.toJSONString(userInfos.get(0));
-//            String userJson = "{\"nickName\":\"user\"}";
-            CookieUtils.setCookie(req, res, USER_TOKEN, String.valueOf(userInfos.get(0).getId()));
+            redisUtils.set("authority:user_token:" + token, token, 60 * 30);
+            redisUtils.set("authority:user_info:" + token, userJson, 60 * 30);
+            CookieUtils.setCookie(req, res, USER_TOKEN, token);
             return token;
         }
 
